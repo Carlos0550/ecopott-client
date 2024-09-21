@@ -1,0 +1,17 @@
+
+.admin__wrapper{
+    background-color: white;
+    display: flex;
+    
+    flex-direction: column;
+    gap: .5rem;
+    padding-top: .5rem;
+    min-height: 100vh;
+}
+
+@media(max-width:800px){
+    .admin__wrapper{
+        justify-content: center;
+
+    }
+}

@@ -7,7 +7,7 @@
     font-family: 'Roboto', 'Lato';
 }
 html{
-    overflow-x: auto;
+    overflow-x: hidden;
     background-color: #eff7df;
 
 }

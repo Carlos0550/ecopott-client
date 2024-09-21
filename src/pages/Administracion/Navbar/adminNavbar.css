@@ -5,13 +5,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center; 
-    padding: 0 2rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9;
     transition: all 300ms ease-in-out;
+    border-radius: 0 0 1rem 1rem;
 }
 
 .menu_icon{
@@ -19,6 +14,7 @@
     font-size: 1.5rem;
     background-color: #ffffff;
     padding: .3rem;
+    margin: .3rem;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -28,6 +24,14 @@
     align-items: center;
     width: 100%;
     justify-content: space-between;
+    /* position: fixed;
+    padding: 0 2rem;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    transition: all 300ms ease-in-out; */
+    width: 100%;
+
 }
 
 .admin__brand { 
@@ -48,7 +52,7 @@
     justify-content: center;
     gap: 1.5rem;
     margin: 0;
-    padding: 0;
+    padding: 1rem;
     list-style: none;
 }
 
@@ -94,12 +98,15 @@
         display: none;
     }
     .admin__header-wrapper{
-        height: 50px;
+        height: 85px;
     }
 }
 
 @media(max-width:640px){
-    .admin__brand{
+    .admin_logo{
         display: none;
+    }
+    .admin__header-wrapper{
+        height: 60px;
     }
 }

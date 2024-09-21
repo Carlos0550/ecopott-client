@@ -3,50 +3,67 @@ import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { QuestionOutlined, UploadOutlined } from "@ant-design/icons";
 import HelpModal from "./HelpModal";
-import { useAppContext } from "../../../../../context";
+import { useAppContext } from "../../../../context";
 const { Option } = Select
-function AddProducts() {
+function AddProducts({editing, product, productImages, closeModal}) {
   const [formProducts] = useForm();
-  const [formCategory] = useForm();
   const [fileList, setFileList] = useState([]);
-
   const [showHelp, setShowHelp] = useState(false);
   const [helpText, setHelpText] = useState(false)
-  const [savingProduct, setSavingProduct] = useState()
-  const { createProduct } = useAppContext()
+  const [savingProduct, setSavingProduct] = useState(false)
+  const { createProduct,editProduct, categories } = useAppContext()
 
-  const handleFinish = async(values) => {
+  const handleFinishProduct = async(values) => {
     setSavingProduct(true)
-    await createProduct(values)
+    editing ? await editProduct(values, product.id_product, productImages) : await createProduct(values)
     setSavingProduct(false)
     formProducts.resetFields()
+    if (editing) closeModal()
   };
+ useEffect(()=>{
+    if (editing && product && productImages) {
+      formProducts.setFieldsValue({
+        productName: product.name,
+        productPrice: product.price,
+        productCategory: product.id_product_category,
+        productDescription: product.description,
+      })
+
+      const images = productImages.map((image) => ({
+        uid: image.id_image,
+        name: `image-${image.id_image}.jpg`,
+        status: "done",
+        url: image.image_url
+      }))
+
+      setFileList(images);
+      formProducts.setFieldsValue({
+        productImages: images,
+      });
+    }
+ },[editing, product, productImages])
 
   const handleUploadChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
-    console.log(newFileList)
   };
 
   const handleHelpModal = (typeHelp = "") => {
-    if (typeHelp.trim() === "helpCategory") {
-        setHelpText("category")
-    }else if(typeHelp.trim() === "helpDescription"){
+    if(typeHelp.trim() === "helpDescription"){
         setHelpText("description")
     }
     setShowHelp(!showHelp);
   };
 
-  
 
 
   return (
     <>
       <Row gutter={16}>
-        <Col sx={24} md={16} sm={16} lg={12}>
+        <Col sx={24} lg={24}>
         <h2>Añadir Productos</h2>
           <Form
             form={formProducts}
-            onFinish={handleFinish}
+            onFinish={handleFinishProduct}
             name="addProducts"
             layout="vertical"
           >
@@ -78,10 +95,13 @@ function AddProducts() {
                 
             >
                 <Select id="productCategory" allowClear>
-                    <Option value="1">
-                        Cemento
+                  {categories.map((item) => (
+                    <Option value={item.id_category} key={item.id_category}>
+                      {item.name}
                     </Option>
+                  ))}
                 </Select>
+
             </Form.Item>
 
             Como hacer más atractiva la descripción del producto{" "}
@@ -124,26 +144,7 @@ function AddProducts() {
             </Form.Item>
           </Form>
         </Col>
-        <Col sx={24} md={18} sm={20} lg={12}>
-        <h2>Añadir Categorias</h2>
-
-          <Form 
-          layout="vertical"
-          name="categoryForm"
-          form={formCategory}
-          >
-            <Form.Item
-            name="categoryName"
-            label= {<>Nombre de la categoria <span style={{marginLeft: ".3rem"}} onClick={()=> handleHelpModal("helpCategory")}><QuestionOutlined/></span></>}
-            style={{width:"100%"}}
-            >
-                <Input/>
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">Guardar Categoria</Button>
-            </Form.Item>
-          </Form>
-        </Col>
+        
       </Row>
       {showHelp && (
             <HelpModal
