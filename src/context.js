@@ -3,6 +3,11 @@ import { useContext, createContext, useState, useEffect, useRef } from "react";
 import { config } from "./config";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import "dayjs/locale/es"
+import locale from "antd/es/locale/es_ES"
+
+dayjs.locale("es")
 export const AppContext = createContext()
 
 export const useAppContext = () =>{
@@ -20,9 +25,8 @@ export const AppContextProvider = ({children}) => {
   const [promotions, setPromotions] = useState([])
   const [productsView, setProductsView] = useState([])
   const navigate = useNavigate()
+
   const createProduct = async (product) => {
-    console.log("Creando....")
-    console.log("Producto: ", product)
     const hiddenMessage = message.loading("Guardando Producto...");
 
     const formData = new FormData();
@@ -37,9 +41,7 @@ export const AppContextProvider = ({children}) => {
   
     try {
       const response = await axios.post(`${config.apiBaseUrl}/upload-product`, formData);
-  
-      hiddenMessage();
-  
+    
       if (response.status === 200) {
         message.success("Producto añadido correctamente!");
         fetchAllData()
@@ -47,9 +49,10 @@ export const AppContextProvider = ({children}) => {
         message.error("Hubo un error al añadir el producto!");
       }
     } catch (error) {
-      hiddenMessage();
       console.error("Error al crear producto:", error);
       message.error("Hubo un error al añadir el producto!");
+    }finally{
+      hiddenMessage()
     }
   };
 
@@ -57,7 +60,6 @@ export const AppContextProvider = ({children}) => {
     const hiddenMessage = message.loading("Creando categoría...",0)
     try {
       const response = await axios.post(`${config.apiBaseUrl}/create-category`, categoryName)
-      hiddenMessage()
       if (response.status === 200) {
         message.success(`${response.data.message}`);
         fetchAllData()
@@ -65,12 +67,13 @@ export const AppContextProvider = ({children}) => {
         message.error(`${response.data.message}`,5);
       }
     } catch (error) {
-      hiddenMessage()
       if (error.response) {
         message.error(`${error.response.data.message}`,5);
       }else{
         message.error("Error de conexión, verifique su internet e intente nuevamente",5)
       }
+    }finally{
+      hiddenMessage()
     }
   };
 
@@ -78,7 +81,7 @@ export const AppContextProvider = ({children}) => {
     const hiddenMessage = message.loading("Aguarde un momento...",0)
     try {
       const response = await axios.get(`${config.apiBaseUrl}/fetch-all-data`)
-      hiddenMessage()
+      
       if (response.status === 200) {
         setCategories(response.data.categories)
         setProductsImages(response.data.product_images)
@@ -95,6 +98,8 @@ export const AppContextProvider = ({children}) => {
       }else{
         message.error("Error de conexión, verifique su internet e intente nuevamente",5)
       }
+    }finally{
+      hiddenMessage()
     }
   }
 
@@ -109,8 +114,8 @@ export const AppContextProvider = ({children}) => {
   },[])
   
   const editProduct = async(product, id, lastImages) => {
-    console.log("Editando....")
     const { productImages } = product;
+    const hiddenMessage = message.loading("Actualizando...")
     const formData = new FormData();
     const newImages = [];
   
@@ -133,10 +138,6 @@ export const AppContextProvider = ({children}) => {
       formData.append("newImages", image); 
     });
 
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`Clave: ${key}, Valor:`, value);
-    // }
-
       try {
         const response = await axios.post(`${config.apiBaseUrl}/update-product/${id}`, formData)
         if (response.status === 200) {
@@ -153,6 +154,8 @@ export const AppContextProvider = ({children}) => {
         }else{
           message.error("Error de conexión, verifique su internet e intente nuevamente",5)
         }
+      }finally{
+        hiddenMessage()
       }
   };
 
@@ -162,10 +165,9 @@ export const AppContextProvider = ({children}) => {
       const response = await axios.delete(`${config.apiBaseUrl}/delete-product/${productID}`, {
         data: {images: productImages}
       })
-      hiddenMessage()
       if (response.status === 200) {
         message.success(`${response.data.message}`)
-        navigate("/")
+        navigate("/view_products")
         fetchAllData()
       }else{
         message.error(`${response.data.message}`)
@@ -177,6 +179,8 @@ export const AppContextProvider = ({children}) => {
         }else{
           message.error("Error de conexión, verifique su internet e intente nuevamente",5)
         }
+    }finally{
+      hiddenMessage()
     }
   };
 
@@ -185,7 +189,6 @@ export const AppContextProvider = ({children}) => {
     const hiddenMessage = message.loading("Eliminando...",0)
     try {
       const response = await axios.delete(`${config.apiBaseUrl}/delete-category/${ID}`)
-      hiddenMessage()
       if (response.status === 200) {
         message.success(`${response.data.message}`)
         navigate("/")
@@ -200,6 +203,8 @@ export const AppContextProvider = ({children}) => {
         }else{
           message.error("Error de conexión, verifique su internet e intente nuevamente",5)
         }
+    }finally{
+      hiddenMessage()
     }
   }
 
@@ -210,7 +215,7 @@ export const AppContextProvider = ({children}) => {
       const response = await axios.put(`${config.apiBaseUrl}/update-category/${ID}`, {
         data: newCategory
       })
-      hiddenMessage()
+      
       if (response.status === 200) {
         message.success(`${response.data.message}`)
         fetchAllData()
@@ -224,6 +229,26 @@ export const AppContextProvider = ({children}) => {
         }else{
           message.error("Error de conexión, verifique su internet e intente nuevamente",5)
         }
+    }finally{
+      hiddenMessage()
+    }
+  }
+
+  const create_promotion = async(values) => {
+    const hiddenMessage = message.loading("Aguarde...",0)
+    
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}/create-promotion`, values)
+      if (response.status === 200) {
+        message.success(`${response.data.message}`)
+        fetchAllData()
+      }else{
+        message.error(`${response.data.message}`)
+      }
+    } catch (error) {
+      
+    }finally{
+      hiddenMessage()
     }
   }
   
@@ -233,11 +258,13 @@ export const AppContextProvider = ({children}) => {
 
     return (
         <AppContext.Provider value={{
+            locale, dayjs,
             createProduct,
             createCategory,
             products,categories,productsView, productsImages, promotions,
             editProduct,deleteProduct,
-            deleteCategory,updateCategory
+            deleteCategory,updateCategory,
+            create_promotion,
         }}>
             {children}
         </AppContext.Provider>
