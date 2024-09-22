@@ -246,7 +246,58 @@ export const AppContextProvider = ({children}) => {
         message.error(`${response.data.message}`)
       }
     } catch (error) {
-      
+      console.log(error)
+        if (error.response) {
+          message.error(`${error.response.data.message}`)
+        }else{
+          message.error("Error de conexión, verifique su internet e intente nuevamente",5)
+        }
+    }finally{
+      hiddenMessage()
+    }
+  }
+
+  const update_promotion = async(values) => {
+    const hiddenMessage = message.loading("Aguarde...",0)
+    
+    try {
+      const response = await axios.post(`${config.apiBaseUrl}/update-promotion`, values)
+      if (response.status === 200) {
+        message.success(`${response.data.message}`)
+        fetchAllData()
+      }else{
+        message.error(`${response.data.message}`)
+      }
+    } catch (error) {
+      console.log(error)
+        if (error.response) {
+          message.error(`${error.response.data.message}`)
+        }else{
+          message.error("Error de conexión, verifique su internet e intente nuevamente",5)
+        }
+    }finally{
+      hiddenMessage()
+    }
+  }
+
+  const delete_promotion = async(promotionID) => {
+    const hiddenMessage = message.loading("Aguarde...",0)
+    
+    try {
+      const response = await axios.delete(`${config.apiBaseUrl}/delete-promotion/${promotionID}`, )
+      if (response.status === 200) {
+        message.success(`${response.data.message}`)
+        fetchAllData()
+      }else{
+        message.error(`${response.data.message}`)
+      }
+    } catch (error) {
+      console.log(error)
+        if (error.response) {
+          message.error(`${error.response.data.message}`)
+        }else{
+          message.error("Error de conexión, verifique su internet e intente nuevamente",5)
+        }
     }finally{
       hiddenMessage()
     }
@@ -264,7 +315,7 @@ export const AppContextProvider = ({children}) => {
             products,categories,productsView, productsImages, promotions,
             editProduct,deleteProduct,
             deleteCategory,updateCategory,
-            create_promotion,
+            create_promotion,update_promotion,delete_promotion,
         }}>
             {children}
         </AppContext.Provider>
