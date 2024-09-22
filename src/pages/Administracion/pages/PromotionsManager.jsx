@@ -27,7 +27,11 @@ function PromotionsManager() {
     formData.append("promoPrice", values.promoPrice)
     formData.append("startDate", startDate)
     formData.append("endDate", expDate)
-
+    if (startDate === dayjs().format("YYYY-MM-DD")) {
+      formData.append("enabled", true)
+    }else{
+      formData.append("enabled", false)
+    }
     formData.forEach((value, key) => {
       console.log(`${key}: ${value}`);
     });
