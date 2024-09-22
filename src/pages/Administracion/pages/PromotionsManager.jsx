@@ -32,9 +32,9 @@ function PromotionsManager() {
     }else{
       formData.append("enabled", false)
     }
-    formData.forEach((value, key) => {
-      console.log(`${key}: ${value}`);
-    });
+    // formData.forEach((value, key) => {
+    //   console.log(`${key}: ${value}`);
+    // });
     
     create_promotion(formData)
   };
@@ -145,7 +145,7 @@ function PromotionsManager() {
                   rules={[
                     {
                       validator: (_, value) => {
-                        if (value && value.length >= 2) {
+                        if (value && value.length > 0) {
                           return Promise.resolve();
                         }
                         return Promise.reject(new Error("Seleccione al menos dos productos"));
