@@ -25,7 +25,7 @@ function AdminNavbar() {
             <li className='admin__li'><Link to={"/"}>Productos/categorías</Link></li>
                 <li className='admin__li'><Link to={"/view_products"}>Visualizar Página</Link></li>
                 <li className='admin__li'><Link to={"/promotions"}>Promociones</Link></li>
-                <li className='admin__li'><Link to={"#"}>Ajustes</Link></li>
+                <li className='admin__li'><Link to={"/settings"}>Ajustes</Link></li>
             </ul>
         </nav>
         <Drawer
@@ -40,7 +40,7 @@ function AdminNavbar() {
                 <li className='admin__li'><Link to={"/"}>Productos/categorías</Link></li>
                 <li className='admin__li'><Link to={"/view_products"}>Visualizar Página</Link></li>
                 <li className='admin__li'><Link to={"/promotions"}>Promociones</Link></li>
-                <li className='admin__li'><Link to={"#"}>Ajustes</Link></li>
+                <li className='admin__li'><Link to={"/settings"}>Ajustes</Link></li>
               </Flex>
         </Drawer>
     </header>
