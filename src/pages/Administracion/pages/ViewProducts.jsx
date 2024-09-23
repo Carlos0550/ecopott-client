@@ -5,7 +5,6 @@ import { useAppContext } from '../../../context';
 import { GroupImagesIntoProducts } from '../../../utils/AdminProcessProducts';
 import { Button, Card, Select } from 'antd';
 import ProductDetails from './ProductDetails'; // Importa el componente de detalles del producto
-import { EditOutlined, EllipsisOutlined, KeyOutlined, SettingOutlined } from '@ant-design/icons';
 import "./css/viewProducts.css"
 import Search from 'antd/es/input/Search';
 
@@ -16,7 +15,6 @@ function ViewProducts() {
   const [categoryId, setCategoryId] = useState(null)
   const navigate = useNavigate();
 
-  console.log(categoryId)
   const GroupedProducts = GroupImagesIntoProducts(productsImages, products);
 
   const filteredGroupedProducts = GroupedProducts.filter((group) => {
