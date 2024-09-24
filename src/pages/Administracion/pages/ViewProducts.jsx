@@ -35,7 +35,7 @@ function ViewProducts() {
 
   return (
     <>
-      <Navbar />
+      <AdminNavbar />
       <div className="admin__wrapper" >
         <Routes>
           <Route
@@ -83,7 +83,7 @@ function ViewProducts() {
             }
           />
          
-          <Route path=":id" element={<ProductView />} />
+          <Route path=":id" element={<ProductDetails />} />
         </Routes>
       </div>
     </>

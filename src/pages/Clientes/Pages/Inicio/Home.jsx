@@ -186,7 +186,6 @@ function Home() {
             </div>
           }
         />
-        <Route path=":productId" element={<ProductDetails />} />
       </Routes>
     </>
   );
