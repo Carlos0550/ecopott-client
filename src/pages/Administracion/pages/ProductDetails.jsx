@@ -5,15 +5,17 @@ import "./css/productDetails.css"
 import { Button, Popconfirm } from 'antd';
 import Markdown from 'react-markdown';
 import EditProductModal from '../EditarProductos/EditProductModal';
+import { useAuthContext } from '../../../AuthContext';
 function ProductDetails() {
   const { id } = useParams(); 
   const { productsImages, products,deleteProduct } = useAppContext();
+  const {categories} = useAuthContext()
   const [openModalEditProduct, setOpenModalEditProduct] = useState(false)
   const product = products.find((prod) => prod.id_product === id);
   const productImages = productsImages.filter(
     (image) => image.id_product_image === id
   );
-
+  const productCategoriesName = categories.find((cat) => cat.id_category === product?.id_product_category)?.name
   const [mainImage, setMainImage] = useState([]);
 
   const alreadySet = useRef(false)
@@ -55,6 +57,7 @@ function ProductDetails() {
 
       <div className='product-details__info'>
         <h1>{product?.name}</h1>
+        <p>Categoría: {productCategoriesName}</p>
         <p>Precio: ${parseFloat(product?.price).toLocaleString("es-ES",{style:"currency", currency:"ARS"})}</p>
         <p>{product?.is_available ? 'Disponible' : 'No disponible'}</p>
         
