@@ -9,7 +9,6 @@ import { useAuthContext } from './AuthContext';
 
 function App() {
   const { isAuthenticated, isAdmin } = useAuthContext();
-  console.log(isAdmin)
   return (
     <Routes>
       
@@ -29,7 +28,7 @@ function App() {
         }
       />
       <Route
-        path="/view_products"
+        path="/view_products/*"
         element={
           isAuthenticated ? (
             isAdmin ? <ViewProducts /> : <Navigate to="/home" />
@@ -60,7 +59,8 @@ function App() {
       />
 
       {/* Ruta pública */}
-      <Route path="/home" element={<Home />} />
+      <Route path="/home/*" element={<Home />} />
+      <Route path='/view_products-details/*' element={<ViewProducts />}/>
     </Routes>
   );
 }
