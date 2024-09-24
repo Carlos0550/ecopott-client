@@ -376,6 +376,7 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
+
   return (
     <AppContext.Provider
       value={{
@@ -389,7 +390,7 @@ export const AppContextProvider = ({ children }) => {
         createCategory,
         products,
         categories,
-        productsView,
+        
         productsImages,
         promotions,
         deleteBanner,
