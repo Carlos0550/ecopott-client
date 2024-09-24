@@ -376,6 +376,30 @@ export const AppContextProvider = ({ children }) => {
     }
   }
 
+  const switchSettings = async (values) => {
+    const hiddenMessage = message.loading("Aguarde...", 0);
+    try {
+      const response = await axios.put(`${config.apiBaseUrl}/update_settings`, {values});
+      if (response.status === 200) {
+        message.success(`${response.data.message}`);
+        fetchAllData();
+      } else {
+        message.error(`${response.data.message}`);
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response) {
+        message.error(`${error.response.data.message}`);
+      } else {
+        message.error(
+          "Error de conexión, verifique su internet e intente nuevamente",
+          5
+        );
+      }
+    } finally {
+      hiddenMessage();
+    }
+  };
 
   return (
     <AppContext.Provider
@@ -390,7 +414,7 @@ export const AppContextProvider = ({ children }) => {
         createCategory,
         products,
         categories,
-        
+        switchSettings,
         productsImages,
         promotions,
         deleteBanner,
