@@ -7,6 +7,8 @@ import { Button, Card, Select } from 'antd';
 import ProductDetails from './ProductDetails'; // Importa el componente de detalles del producto
 import "./css/viewProducts.css"
 import Search from 'antd/es/input/Search';
+import ProductView from '../../Clientes/Pages/DetallesDelProducto/ProductView';
+import Navbar from '../../Clientes/Pages/Componentes/Navbar/Navbar';
 
 const { Option } = Select
 function ViewProducts() {
@@ -25,6 +27,7 @@ function ViewProducts() {
   });
 
   const handleCardClick = (productId) => {
+    console.log(productId)
     navigate(`/view_products/${productId}`); 
   };
 
@@ -32,7 +35,7 @@ function ViewProducts() {
 
   return (
     <>
-      <AdminNavbar />
+      <Navbar />
       <div className="admin__wrapper" >
         <Routes>
           <Route
@@ -80,7 +83,7 @@ function ViewProducts() {
             }
           />
          
-          <Route path=":id" element={<ProductDetails />} />
+          <Route path=":id" element={<ProductView />} />
         </Routes>
       </div>
     </>
