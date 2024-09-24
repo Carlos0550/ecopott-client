@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAppContext } from '../../../../context';
 import "./productDetails.css"
 import Markdown from 'react-markdown';
-import { useAuthContext } from '../../../../AuthContext';
+import { useLocation } from 'react-router-dom';
 import Navbar from '../Componentes/Navbar/Navbar';
 function ProductView() {
   const { productId } = useParams(); 
-  console.log(productId)
-  const { productsImages, products } = useAppContext();
-  const {categories} = useAuthContext()
+  const location = useLocation();
+  const { products, productsImages, categories } = location.state;
   const product = products.find((prod) => prod.id_product === productId);
   const productImages = productsImages.filter(
     (image) => image.id_product_image === productId
