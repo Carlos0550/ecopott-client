@@ -6,6 +6,7 @@ import { Button, Card, Carousel, Pagination, Select } from "antd";
 import { config } from "../../../../config";
 import { GroupImagesIntoProducts } from "../../../../utils/AdminProcessProducts";
 import Search from "antd/es/transfer/search";
+import { useAuthContext } from "../../../../AuthContext";
 
 const { Option } = Select;
 
@@ -24,50 +25,28 @@ function Home() {
   const [categoryId, setCategoryId] = useState(null);
   const navigate = useNavigate();
   const alreadyFetch = useRef(false);
-  const [categories, setCategories] = useState([]);
-  const [productsImages, setProductsImages] = useState([]);
-  const [products, setProducts] = useState([]);
+
   const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
+  const {fetchAllData,promotions, productsImages, products, categories, settings, bannersImgs} = useAuthContext()
 
   useEffect(() => {
     if (!alreadyFetch.current) {
-      alreadyFetch.current = true;
-      setLoading(true);
-      fetch(`${config.apiBaseUrl}/get_products_view`)
-        .then((res) => res.json())
-        .then((data) => {
-          setServerData(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        });
+      (async()=>{
+        alreadyFetch.current = true;
+        setLoading(true);
+        await fetchAllData()
+        setLoading(false);  
+      })() 
     }
   }, []);
-
+  
   useEffect(() => {
-    if (serverData) {
-      const { bannersImgs, categories, products, productImages } = serverData;
-
-      if (bannersImgs) {
-        const bannersImages = bannersImgs.map((item) => JSON.parse(item.image_urls)[0]);
-        setBanners(bannersImages);
-      }
-
-      if (categories) {
-        setCategories(categories);
-      }
-
-      if (products) {
-        setProducts(products);
-      }
-
-      if (productImages) {
-        setProductsImages(productImages);
-      }
+    if (bannersImgs && bannersImgs.length > 0) {
+      const bannersImages = bannersImgs.map((item) => JSON.parse(item.image_urls)[0]);
+      setBanners(bannersImages);
     }
-  }, [serverData]);
+
+  }, [bannersImgs]);
 
   useEffect(() => {
     const handleResize = () => setSlidesToShow(getSlidesToShow());

@@ -2,12 +2,22 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import "./productDetails.css"
 import Markdown from 'react-markdown';
-import { useLocation } from 'react-router-dom';
 import Navbar from '../Componentes/Navbar/Navbar';
+import { useAuthContext } from '../../../../AuthContext';
 function ProductView() {
   const { productId } = useParams(); 
-  const location = useLocation();
-  const { products, productsImages, categories } = location.state;
+  const { fetchAllData,productsImages,products,categories } = useAuthContext()
+  
+  const alreadyFetch = useRef(false)
+  useEffect(()=>{
+    if ((!productImages || !product || !categories) && !alreadyFetch.current) {
+      (async()=>{
+        alreadyFetch.current = true
+        await fetchAllData()
+      })()
+    }
+  },[categories, products, productsImages, categories])
+
   const product = products.find((prod) => prod.id_product === productId);
   const productImages = productsImages.filter(
     (image) => image.id_product_image === productId
