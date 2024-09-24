@@ -10,13 +10,13 @@ function ProductView() {
   
   const alreadyFetch = useRef(false)
   useEffect(()=>{
-    if ((!productImages || !product || !categories) && !alreadyFetch.current) {
+    if ((!productsImages || !products || !categories) && !alreadyFetch.current) {
       (async()=>{
         alreadyFetch.current = true
         await fetchAllData()
       })()
     }
-  },[categories, products, productsImages, categories])
+  },[products, productsImages, categories])
 
   const product = products.find((prod) => prod.id_product === productId);
   const productImages = productsImages.filter(
