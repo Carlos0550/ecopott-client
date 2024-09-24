@@ -6,6 +6,7 @@ import Login from './pages/Login/Login';
 import Settings from './pages/Administracion/pages/Settings';
 import Home from "./pages/Clientes/Pages/Inicio/Home";
 import { useAuthContext } from './AuthContext';
+import ProductView from './pages/Clientes/Pages/DetallesDelProducto/ProductView';
 
 function App() {
   const { isAuthenticated, isAdmin } = useAuthContext();
@@ -60,8 +61,8 @@ function App() {
 
       {/* Ruta pública */}
       <Route path="/home/*" element={<Home />} />
-      <Route path='/view_products-details/*' element={<ViewProducts />}/>
-    </Routes>
+      <Route path='/view_products-details/:productId' element={<ProductView/>}/>
+      </Routes>
   );
 }
 
