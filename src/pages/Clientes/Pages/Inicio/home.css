@@ -1,0 +1,122 @@
+.home__wrapper {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    
+    padding-bottom: 1rem;
+    gap: .5rem;
+    min-height: 100vh;
+}
+
+.carouselContainer {
+  width: 100%; 
+  max-height: min-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  overflow: hidden;
+}
+
+.imageContainer {
+  overflow: hidden;
+  width: 100%; 
+  height: 100%;
+  display: flex;
+  justify-content: center; /* Centra la imagen */
+  align-items: center;         
+}
+
+.carouselImg {
+  width: 100%; /* Cambiado a 100% para llenar el contenedor */
+  height: auto; /* Mantiene la proporción */
+  object-fit: cover; /* Cambiado a cover para llenar el contenedor sin distorsión */
+  transform: scale(1); /* Escalado normal para pantallas grandes */
+  transition: transform 0.5s ease; 
+}
+
+@media(max-width: 768px) {
+  .carouselContainer {
+    max-height: 200px; /* Mantiene el tamaño en pantallas pequeñas */
+  }
+
+  .carouselImg {
+    transform: scale(1); 
+  }
+}
+
+.home__products__container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: .5rem;
+  padding-top: .5rem;
+  margin: .5rem;
+  height: min-content;
+}
+
+.home__product__card {
+  width: 250px;
+  transition: all 300ms ease-in-out;
+
+}
+
+.home__card__img {
+  width: 100%; 
+  height: 200px; 
+  object-fit: cover; 
+}
+
+.home__product__actions{
+  margin-left: .5rem;
+  display: flex;
+  gap: .5rem;
+  justify-content: space-between;
+}
+
+.home__search_product{
+  max-width:10%;
+}
+
+.home__category__selector{
+  width: 20%;
+  margin-right: .5rem;
+
+}
+
+@media(max-width:768px){
+  .home__products__container{
+      justify-content: space-evenly;
+  }
+  .home__product__card{
+      width: 200px;
+  }
+
+  .home__category__selector{
+      width: 50%;
+  }
+  .home__search_product{
+      max-width: 50%;
+  }
+}
+
+@media(max-width:480px){
+  .home__products__container{
+      justify-content: center;
+  }
+  .home__product__card{
+      width: 300px;
+  }
+  .home__search_product{
+      max-width: 50%;
+  }
+  .home__category__selector{
+      width: 100%;
+      margin-right: .5rem;
+  
+  }
+}
+
