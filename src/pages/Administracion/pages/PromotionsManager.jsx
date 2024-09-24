@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import AdminNavbar from "../Navbar/AdminNavbar";
-import { Col, Row, Form, Checkbox, Button, Card, Input, ConfigProvider, DatePicker, notification, message, Table, Popconfirm } from "antd";
+import { Col, Row, Form, Checkbox, Button, Card, Input, ConfigProvider, DatePicker, notification, message, Table, Popconfirm, Upload } from "antd";
 import { useAppContext } from "../../../context";
 import { scroller } from "react-scroll"
 import dayjs from 'dayjs';
@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import Edit from "../../../SVGs/Edit" 
 import DeleteIcon from "../../../SVGs/DeleteIcon"
 import { processPromotions } from "../../../utils/processPromotions";
+import { UploadOutlined } from "@ant-design/icons";
 
 function PromotionsManager() {
   const [form] = Form.useForm();
@@ -21,6 +22,7 @@ function PromotionsManager() {
   const [expDate, setExpDate] = useState(null);
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [fileList, setFileList] = useState([]);
 
   const [editingPromotion, setEditingPromotion] = useState(false)
   const [selectedPromotion, setSelectedPromotion] = useState(null)
@@ -171,6 +173,10 @@ const tablePromotion = [
     }
 ]
 
+const handleUploadChange = ({ fileList: newFileList }) => {
+  setFileList(newFileList);
+};
+
   return (
     <>
       <AdminNavbar />
@@ -260,7 +266,7 @@ const tablePromotion = [
 
                 <Form.Item
                   name="groupProducts"
-                  label={"¿Que productos desea agregar a la promo?"}
+                  label={"¿Que productos desea agregar a la promo/combo?"}
                   style={{ maxHeight: 350, overflowY: "auto" }}
                   rules={[
                     {
@@ -284,6 +290,24 @@ const tablePromotion = [
                     </div>
                   </Checkbox.Group>
                 </Form.Item>
+
+                <Form.Item
+            name="productImages"
+            label="Imagen de la promo/combo"
+            valuePropName="fileList"
+            getValueFromEvent={(e)=> e && e.fileList}
+            rules={[{ required: true, message: "Sube al menos una imagen del producto" }]}
+            >
+              <Upload
+              listType="picture"
+              fileList={fileList}
+              onChange={handleUploadChange}
+              beforeUpload={()=> false}
+              >
+                <Button icon={<UploadOutlined/>}>Subir Imagen</Button>
+              </Upload>
+
+            </Form.Item>
                 <Form.Item>
                   <Button type="primary" htmlType="submit" loading={loading}>
                     Crear Promoción
