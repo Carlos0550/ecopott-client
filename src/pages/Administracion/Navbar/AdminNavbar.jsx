@@ -24,7 +24,7 @@ function AdminNavbar() {
             <ul className='admin__links'>
             <li className='admin__li'><Link to={"/"}>Productos/categorías</Link></li>
                 <li className='admin__li'><Link to={"/view_products"}>Visualizar Página</Link></li>
-                <li className='admin__li'><Link to={"/promotions"}>Promociones</Link></li>
+                <li className='admin__li'><Link to={"/promotions"}>Promociones/banners</Link></li>
                 <li className='admin__li'><Link to={"/settings"}>Ajustes</Link></li>
             </ul>
         </nav>
@@ -39,7 +39,7 @@ function AdminNavbar() {
               <Flex vertical gap={"middle"}>
                 <li className='admin__li'><Link to={"/"}>Productos/categorías</Link></li>
                 <li className='admin__li'><Link to={"/view_products"}>Visualizar Página</Link></li>
-                <li className='admin__li'><Link to={"/promotions"}>Promociones</Link></li>
+                <li className='admin__li'><Link to={"/promotions"}>Promociones/banners</Link></li>
                 <li className='admin__li'><Link to={"/settings"}>Ajustes</Link></li>
               </Flex>
         </Drawer>
