@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Navbar from "../Componentes/Navbar/Navbar";
 import "./home.css";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { Button, Card, Carousel, Pagination, Select } from "antd";
+import { Button, Card, Carousel, Empty, Pagination, Select, Skeleton, Typography } from "antd";
 import { config } from "../../../../config";
 import { GroupImagesIntoProducts } from "../../../../utils/AdminProcessProducts";
 import Search from "antd/es/transfer/search";
@@ -28,6 +28,7 @@ function Home() {
 
   const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
   const {fetchAllData,promotions, productsImages, products, categories, settings, bannersImgs} = useAuthContext()
+  const pageEnabled = settings[0]?.page_enabled
 
   useEffect(() => {
     if (!alreadyFetch.current) {
@@ -39,7 +40,6 @@ function Home() {
       })() 
     }
   }, []);
-  
   useEffect(() => {
     if (bannersImgs && bannersImgs.length > 0) {
       const bannersImages = bannersImgs.map((item) => JSON.parse(item.image_urls)[0]);
@@ -93,8 +93,10 @@ function Home() {
           path="/*"
           element={
             <div className="home__wrapper">
-              <div className="carouselContainer">
-                <Carousel autoplay arrows slidesToShow={slidesToShow}>
+              {pageEnabled ? (
+               <>
+                 <div className="carouselContainer">
+                {loading ? <Skeleton active/> : <Carousel autoplay arrows slidesToShow={slidesToShow}>
                   {banners.map((item, index) => (
                     <div key={index} className="imageContainer">
                       <img
@@ -104,7 +106,7 @@ function Home() {
                       />
                     </div>
                   ))}
-                </Carousel>
+                </Carousel>}
               </div>
               <div className="home__product__actions">
                 <Search
@@ -128,7 +130,7 @@ function Home() {
                 </Select>
               </div>
               <div className="home__products__container">
-                {paginatedProducts.map((product) => (
+                {loading ? <Skeleton active/> : paginatedProducts.map((product) => (
                   <Card
                     key={product.id_product}
                     className="home__product__card"
@@ -175,6 +177,23 @@ function Home() {
                 showSizeChanger
                 pageSizeOptions={[6, 12, 24]}
               />
+               </>
+              ): (
+                <>
+                  <Empty
+                    image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+                    imageStyle={{
+                      height: 120,
+                    }}
+                    description={
+                      <Typography.Text>
+                        Estamos preparando esta página con productos increíbles
+                      </Typography.Text>
+                    }
+                  >
+                  </Empty>
+                </>
+              )}
             </div>
           }
         />

@@ -24,8 +24,10 @@ import { useAuthContext } from "../../../AuthContext";
 function Settings() {
   const navigate = useNavigate();
   const [fileList, setFileList] = useState([]);
-  const { cloudinaryUsage, getUsages, errorGettingUsages, supabaseUsage,uploadBanner,deleteBanner } =
+  const { cloudinaryUsage, getUsages, errorGettingUsages, supabaseUsage,uploadBanner,deleteBanner, switchSettings } =
     useAppContext();
+  const { settings } = useAuthContext()
+  const pageEnabled = settings[0]?.page_enabled
   const {bannersImgs} = useAuthContext()
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -47,13 +49,16 @@ function Settings() {
     setFileList([])
   }
 
+  const handleSwitchChange = async(value) => {
+    setLoading(true)
+    await switchSettings(value)
+    setLoading(false)
+  }
+
   const handleUploadChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
 
-  // useEffect(()=>{
-  //   console.log(fileList)
-  // },[fileList])
 
   const getUsageCloudinary = () => {
     if (cloudinaryUsage && cloudinaryUsage.storage) {
@@ -206,7 +211,7 @@ if (bannersImgs && bannersImgs.length > 0) {
           <Col xs={24} sm={18} md={16} lg={8}>
             <Card title="Ajustes de la página">
               <h3>Habilitar página</h3>
-              <Switch></Switch>{" "}
+              <Switch loading={loading} onChange={handleSwitchChange} value={pageEnabled}></Switch>{" "}
               <Button onClick={() => navigate("/home")}>Visitar Tienda</Button>
               
             </Card>
