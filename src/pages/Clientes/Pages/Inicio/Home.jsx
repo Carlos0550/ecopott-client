@@ -5,17 +5,17 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import { Button, Card, Carousel, Pagination, Select } from "antd";
 import { config } from "../../../../config";
 import { GroupImagesIntoProducts } from "../../../../utils/AdminProcessProducts";
-import { useAuthContext } from "../../../../AuthContext";
 import Search from "antd/es/transfer/search";
-import ProductView from "../DetallesDelProducto/ProductView";
-import ProductDetails from "../../../Administracion/pages/ProductDetails";
+
 const { Option } = Select;
+
 const getSlidesToShow = () => {
   const width = window.innerWidth;
   if (width >= 1400) return 3;
   if (width > 768 && width < 1400) return 2;
   return 1;
 };
+
 function Home() {
   const [loading, setLoading] = useState(false);
   const [serverData, setServerData] = useState([]);
@@ -24,14 +24,16 @@ function Home() {
   const [categoryId, setCategoryId] = useState(null);
   const navigate = useNavigate();
   const alreadyFetch = useRef(false);
-  const { productsImages, products, categories } = useAuthContext();
-  const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow()); // New state for responsive slides
+  const [categories, setCategories] = useState([]);
+  const [productsImages, setProductsImages] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
 
   useEffect(() => {
     if (!alreadyFetch.current) {
       alreadyFetch.current = true;
       setLoading(true);
-      fetch(`${config.apiBaseUrl}/get_products_view`, { method: "GET" })
+      fetch(`${config.apiBaseUrl}/get_products_view`)
         .then((res) => res.json())
         .then((data) => {
           setServerData(data);
@@ -45,30 +47,37 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (serverData && serverData.bannersImgs) {
-      const bannersImgs = serverData.bannersImgs;
-      setBanners(bannersImgs.map((item) => JSON.parse(item.image_urls)[0]));
+    if (serverData) {
+      const { bannersImgs, categories, products, productImages } = serverData;
+
+      if (bannersImgs) {
+        const bannersImages = bannersImgs.map((item) => JSON.parse(item.image_urls)[0]);
+        setBanners(bannersImages);
+      }
+
+      if (categories) {
+        setCategories(categories);
+      }
+
+      if (products) {
+        setProducts(products);
+      }
+
+      if (productImages) {
+        setProductsImages(productImages);
+      }
     }
   }, [serverData]);
-
-  // Responsive handling for carousel slides
- 
 
   useEffect(() => {
     const handleResize = () => setSlidesToShow(getSlidesToShow());
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
   const processedProducts = GroupImagesIntoProducts(productsImages, products);
   const filteredGroupedProducts = processedProducts.filter((group) => {
-    const matchesName = group.name
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
-    const matchesCategory = categoryId
-      ? group.id_product_category === categoryId
-      : true;
-
+    const matchesName = group.name.toLowerCase().includes(searchText.toLowerCase());
+    const matchesCategory = categoryId ? group.id_product_category === categoryId : true;
     return matchesName && matchesCategory;
   });
 
@@ -88,7 +97,13 @@ function Home() {
   }, [filteredGroupedProducts, currentPage, pageSize]);
 
   const handleCardClick = (productId) => {
-    navigate(`/view_products-details/${productId}`);
+    navigate(`/view_products-details/${productId}`,{
+      state: {
+        products,
+        productsImages,
+        categories
+      }
+    });
   };
 
   return (
@@ -101,17 +116,15 @@ function Home() {
             <div className="home__wrapper">
               <div className="carouselContainer">
                 <Carousel autoplay arrows slidesToShow={slidesToShow}>
-                  {banners &&
-                    banners.length > 0 &&
-                    banners.map((item, index) => (
-                      <div key={index} className="imageContainer">
-                        <img
-                          src={item}
-                          alt={`imagen-producto-${item}`}
-                          className="carouselImg"
-                        />
-                      </div>
-                    ))}
+                  {banners.map((item, index) => (
+                    <div key={index} className="imageContainer">
+                      <img
+                        src={item}
+                        alt={`imagen-producto-${item}`}
+                        className="carouselImg"
+                      />
+                    </div>
+                  ))}
                 </Carousel>
               </div>
               <div className="home__product__actions">
