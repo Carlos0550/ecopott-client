@@ -59,9 +59,9 @@ function ProductView() {
 
       <div className='product-details__info'>
         <h1>{product?.name}</h1>
-        <p>Categoría: {productCategoriesName}</p>
-        <p>Precio: ${parseFloat(product?.price).toLocaleString("es-ES",{style:"currency", currency:"ARS"})}</p>
-        <p>{product?.is_available ? 'Disponible' : 'No disponible'}</p>
+        <p><strong>Categoría:</strong> {productCategoriesName}</p>
+        <p><strong>Precio:</strong> ${parseFloat(product?.price).toLocaleString("es-ES",{style:"currency", currency:"ARS"})}</p>
+        <p><strong>Disponible: </strong> {product?.is_available ? 'Disponible' : 'No disponible'}</p>
 
         <div className='product-details__description'>
           <Markdown>{product?.description}</Markdown>

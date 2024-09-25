@@ -26,15 +26,13 @@ const getSlidesToShow = () => {
   return 1;
 };
 
-
 const getSlidesToShowPromotions = () => {
   const width = window.innerWidth;
-  if (width > 1000) return 4;   // Pantallas grandes
-  if (width > 768 && width <= 1000) return 3;  // Pantallas medianas
-  if (width <= 768) return 1;   // Pantallas pequeñas
+  if (width > 1000) return 4; // Pantallas grandes
+  if (width > 768 && width <= 1000) return 3; // Pantallas medianas
+  if (width <= 768) return 1; // Pantallas pequeñas
   // return 1;  // Caso base (extra pequeñas)
 };
-
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -47,7 +45,7 @@ function Home() {
   const [slidesToShow, setSlidesToShow] = useState(getSlidesToShow());
   const [slidesToShowPromotions, setSlidesToShowPromotions] = useState(
     getSlidesToShowPromotions()
-  )
+  );
   const {
     fetchAllData,
     promotions,
@@ -63,8 +61,6 @@ function Home() {
   const filteredPromotions = promotions.filter(
     (promotion) => promotion.enabled === true
   );
-  console.log("Filtro: ", filteredPromotions);
-
   useEffect(() => {
     if (!alreadyFetch.current) {
       (async () => {
@@ -89,14 +85,14 @@ function Home() {
       setSlidesToShow(getSlidesToShow());
       setSlidesToShowPromotions(getSlidesToShowPromotions());
     };
-  
+
     window.addEventListener("resize", handleResize);
-  
+
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  
+
   const processedProducts = GroupImagesIntoProducts(productsImages, products);
   const filteredGroupedProducts = processedProducts.filter((group) => {
     const matchesName = group.name
@@ -160,79 +156,89 @@ function Home() {
                       </Carousel>
                     )}
                   </div>
-                  <Card title="Promociones" style={{ height: "min-content"}}>
-  {filteredPromotions.length > 0 ? (
-    <Carousel
-      autoplaySpeed={2000}  // Velocidad del autoplay
-      autoplay            // Habilitar autoplay
-      arrows              // Flechas de navegación
-      infinite            // Deslizamiento infinito
-      slidesToShow={slidesToShowPromotions}  // Mostrar las promociones configuradas por tamaño de pantalla
-      slidesToScroll={1}  // Cuántas tarjetas se deslizan a la vez
-      speed={5000}        // Velocidad del deslizamiento en ms para hacerlo más lento
-      pauseOnHover={true} // No detener el autoplay al pasar el mouse
-    >
-      {filteredPromotions.map((promo) => (
-        <div
-          key={promo.id_promotion}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <Card
-            hoverable
-            style={{
-              width: "220px",
-              height: "300px",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-evenly",
-            }}
-            cover={
-              <picture
-                style={{
-                  height: "150px",
-                  overflow: "hidden",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  alt={promo.name}
-                  src={promo.imageUrl}
-                  style={{
-                    height: "100%",
-                    width: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </picture>
-            }
-          >
-            <Card.Meta
-              title={
-                <span style={{ whiteSpace: "normal", overflow: "visible", textOverflow: "unset" }}>
-                  {promo.name}
-                </span>
-              }
-              description={`Precio: $${promo.price}`}
-            />
-            <p style={{ marginTop: "10px" }}>
-              {`Válido desde: ${dayjs(promo.start_date).format("DD-MM-YYYY")} hasta: ${dayjs(promo.end_date).format("DD-MM-YYYY")}`}
-            </p>
-          </Card>
-        </div>
-      ))}
-    </Carousel>
-  ) : (
-    <p>Por el momento no tenemos promociones, vuelve pronto!</p>
-  )}
-</Card>
-
-
+                  <Card title="Promociones" style={{ height: "min-content" }}>
+                    {filteredPromotions.length > 0 ? (
+                      <Carousel
+                        autoplaySpeed={5000} // Velocidad del autoplay
+                        autoplay // Habilitar autoplay
+                        arrows // Flechas de navegación
+                        infinite // Deslizamiento infinito
+                        slidesToShow={slidesToShowPromotions} // Mostrar las promociones configuradas por tamaño de pantalla
+                        slidesToScroll={1} // Cuántas tarjetas se deslizan a la vez
+                        speed={5000} // Velocidad del deslizamiento en ms para hacerlo más lento
+                        pauseOnHover={true} // No detener el autoplay al pasar el mouse
+                      >
+                        {filteredPromotions.map((promo) => (
+                          <div
+                            key={promo.id_promotion}
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Card
+                              hoverable
+                              style={{
+                                width: "220px",
+                                height: "300px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "space-evenly",
+                              }}
+                              cover={
+                                <picture
+                                  style={{
+                                    height: "150px",
+                                    overflow: "hidden",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <img
+                                    alt={promo.name}
+                                    src={promo.imageUrl}
+                                    style={{
+                                      height: "100%",
+                                      width: "100%",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </picture>
+                              }
+                            >
+                              <Card.Meta
+                                title={
+                                  <span
+                                    style={{
+                                      whiteSpace: "normal",
+                                      overflow: "visible",
+                                      textOverflow: "unset",
+                                    }}
+                                  >
+                                    {promo.name}
+                                  </span>
+                                }
+                                description={`Precio: $${promo.price}`}
+                              />
+                              <p style={{ marginTop: "10px" }}>
+                                {`Válido desde: ${dayjs(
+                                  promo.start_date
+                                ).format("DD-MM-YYYY")} hasta: ${dayjs(
+                                  promo.end_date
+                                ).format("DD-MM-YYYY")}`}
+                              </p>
+                            </Card>
+                          </div>
+                        ))}
+                      </Carousel>
+                    ) : (
+                      <p>
+                        Por el momento no tenemos promociones, vuelve pronto!
+                      </p>
+                    )}
+                  </Card>
 
                   <div className="home__product__actions">
                     <Search
@@ -264,10 +270,15 @@ function Home() {
                           key={product.id_product}
                           className="home__product__card"
                           hoverable
+                          style={{background: product.is_available ? "" : "grey"}}
                           cover={
                             product.imagenes.length > 0 ? (
                               <img
                                 src={product.imagenes[0].image_url}
+                                style={{
+                                  filter: product.is_available ? "none" : "grayscale(100%)",
+                                  opacity: product.is_available ? 1 : 0.5, 
+                                }}                                
                                 className="home__card__img"
                                 alt={product.name}
                               />
@@ -286,6 +297,7 @@ function Home() {
                               </div>
                             )
                           }
+                          
                           onClick={() => handleCardClick(product.id_product)}
                           // actions={[
                           //   <Button type="primary" disabled>
@@ -293,7 +305,19 @@ function Home() {
                           //   </Button>,
                           // ]}
                         >
-                          <Card.Meta     title={<span style={{ whiteSpace: "normal", overflow: "visible", textOverflow: "unset" }}>{product.name}</span>} />
+                          <Card.Meta
+                            title={
+                              <span
+                                style={{
+                                  whiteSpace: "normal",
+                                  overflow: "visible",
+                                  textOverflow: "unset",
+                                }}
+                              >
+                                {product.is_available ? product.name : <>{product.name} (Sin stock)</>}
+                              </span>
+                            }
+                          />
                           <p>${product.price}</p>
                         </Card>
                       ))
