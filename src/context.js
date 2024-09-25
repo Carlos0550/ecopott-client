@@ -401,6 +401,35 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
+  const changeProductState = async(formData) => {
+    console.log(formData)
+    const hiddenMessage = message.loading("Aguarde...", 0);
+    try {
+      const response = await axios.put(`${config.apiBaseUrl}/update_product_state`, formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+      if (response.status === 200) {
+        message.success(`${response.data.message}`);
+        fetchAllData();
+      }else{
+        message.error(`${response.data.message}`);
+      }
+    } catch (error) {
+      console.log(error)
+      if(error.response){
+        message.error(`${error.response.data.message}`)
+      }else{
+        message.error(
+          "Error de conexión, verifique su internet e intente nuevamente",
+          5
+        );
+      }
+    }finally{
+      hiddenMessage()
+    }
+  }
   return (
     <AppContext.Provider
       value={{
@@ -425,7 +454,8 @@ export const AppContextProvider = ({ children }) => {
         create_promotion,
         update_promotion,
         delete_promotion,
-        uploadBanner
+        uploadBanner,
+        changeProductState
       }}
     >
       {children}
