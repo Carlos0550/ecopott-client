@@ -402,7 +402,6 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const changeProductState = async(formData) => {
-    console.log(formData)
     const hiddenMessage = message.loading("Aguarde...", 0);
     try {
       const response = await axios.put(`${config.apiBaseUrl}/update_product_state`, formData,{

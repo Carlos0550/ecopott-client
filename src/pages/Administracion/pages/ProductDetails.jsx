@@ -80,7 +80,6 @@ function ProductDetails() {
           >
             <Button type="danger">Eliminar</Button>
           </Popconfirm>
-          {console.log(products)}
           <Space>
             <p>Disponible: </p>
           <Switch value={product?.is_available} loading={loadingState} onChange={(value)=>handleSwitchChange(value, product.id_product)}/>
