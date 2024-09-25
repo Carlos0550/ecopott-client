@@ -48,6 +48,14 @@
   }
 }
 
+.promotions_container{
+  display: flex;
+  gap: .5rem;
+  padding-top: .5rem;
+  margin: .5rem;
+  height: min-content;
+}
+
 .home__products__container {
   display: flex;
   flex-wrap: wrap;
