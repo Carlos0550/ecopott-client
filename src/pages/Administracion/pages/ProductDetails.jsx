@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppContext } from '../../../context';
 import "./css/productDetails.css"
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Space, Switch } from 'antd';
 import Markdown from 'react-markdown';
 import EditProductModal from '../EditarProductos/EditProductModal';
 import { useAuthContext } from '../../../AuthContext';
 function ProductDetails() {
   const { id } = useParams(); 
-  const { productsImages, products,deleteProduct } = useAppContext();
+  const { productsImages, products,deleteProduct,changeProductState } = useAppContext();
   const {categories} = useAuthContext()
   const [openModalEditProduct, setOpenModalEditProduct] = useState(false)
   const product = products.find((prod) => prod.id_product === id);
@@ -32,6 +32,16 @@ function ProductDetails() {
 
   const handleDeleteProduct = (ID) => {
     deleteProduct(ID, productImages)
+  }
+
+  const [loadingState, setLoadingState] = useState(false)
+  const handleSwitchChange = async(value, productId) => {
+    const formData = new FormData()
+    setLoadingState(true)
+    formData.append("is_available", value)
+    formData.append("productId", productId)
+    await changeProductState(formData)
+    setLoadingState(false)
   }
 
   return (
@@ -70,7 +80,11 @@ function ProductDetails() {
           >
             <Button type="danger">Eliminar</Button>
           </Popconfirm>
-          <Button type="default">Marcar como Tendencia</Button>
+          {console.log(products)}
+          <Space>
+            <p>Disponible: </p>
+          <Switch value={product?.is_available} loading={loadingState} onChange={(value)=>handleSwitchChange(value, product.id_product)}/>
+          </Space>
         </div>
 
         <div className='product-details__description'>
