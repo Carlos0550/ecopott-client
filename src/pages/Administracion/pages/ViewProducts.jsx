@@ -7,8 +7,7 @@ import { Button, Card, Select } from 'antd';
 import ProductDetails from './ProductDetails'; // Importa el componente de detalles del producto
 import "./css/viewProducts.css"
 import Search from 'antd/es/input/Search';
-import ProductView from '../../Clientes/Pages/DetallesDelProducto/ProductView';
-import Navbar from '../../Clientes/Pages/Componentes/Navbar/Navbar';
+
 
 const { Option } = Select
 function ViewProducts() {
