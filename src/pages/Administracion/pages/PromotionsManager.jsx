@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import AdminNavbar from "../Navbar/AdminNavbar";
+import ImageCompressor from 'image-compressor.js';
+import Pica from 'pica';
+
 import {
   Col,
   Row,
@@ -26,6 +29,7 @@ import { processPromotions } from "../../../utils/processPromotions";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../../../AuthContext";
 import { name } from "dayjs/locale/es";
+const pica = Pica();
 
 function PromotionsManager() {
   const [form] = Form.useForm();
@@ -262,9 +266,45 @@ function PromotionsManager() {
   };
 
 
-  const handleUploadBannerChange = ({ fileList: newFileList }) => {
-    setFileListBanner(newFileList);
+  const handleUploadBannerChange = async ({ fileList: newFileList }) => {
+    const compressedFiles = await Promise.all(newFileList.map(async (file) => {
+      const image = new Image();
+      image.src = URL.createObjectURL(file.originFileObj);
+  
+      return new Promise((resolve, reject) => {
+        image.onload = async () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800; // Ajusta el ancho máximo
+  
+          // Mantener la relación de aspecto al redimensionar
+          const scale = MAX_WIDTH / image.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = image.height * scale;
+  
+          // Redimensionar con Pica
+          const resizedCanvas = await pica.resize(image, canvas, {
+            quality: 2, // Calidad de la compresión (más alto = mejor calidad)
+          });
+  
+          // Convertir el canvas comprimido en un Blob
+          const compressedBlob = await pica.toBlob(resizedCanvas, 'image/jpeg', 0.9); // Ajusta la calidad a 0.6
+  
+          // Crear un archivo de nuevo a partir del Blob
+          const compressedFile = new File([compressedBlob], file.name, { type: 'image/jpeg' });
+  
+          console.log("Original file size:", file.originFileObj.size);
+          console.log("Compressed file size:", compressedFile.size);
+  
+          resolve(compressedFile);
+        };
+  
+        image.onerror = (err) => reject(err);
+      });
+    }));
+  
+    setFileListBanner(compressedFiles);
   };
+  
 
   const onFinishBanner = async(values) => {
     const formData = new FormData();
@@ -275,6 +315,7 @@ function PromotionsManager() {
     formData.append("bannerName", values.bannerName);
     setLoading(true)
     await uploadBanner(formData)
+    console.log(fileListBanner)
     setLoading(false)
     formBanner.resetFields()
     setFileListBanner([])
