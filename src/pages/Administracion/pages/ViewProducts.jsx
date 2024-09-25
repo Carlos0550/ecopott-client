@@ -27,7 +27,6 @@ function ViewProducts() {
   });
 
   const handleCardClick = (productId) => {
-    console.log(productId)
     navigate(`/view_products/${productId}`); 
   };
 

@@ -305,12 +305,11 @@ function PromotionsManager() {
     setFileListBanner(compressedFiles);
   };
   
-
   const onFinishBanner = async(values) => {
     const formData = new FormData();
 
     fileListBanner.forEach((file) => {
-      formData.append("bannerImages", file.originFileObj);
+      formData.append("bannerImages", file);
     });
     formData.append("bannerName", values.bannerName);
     setLoading(true)

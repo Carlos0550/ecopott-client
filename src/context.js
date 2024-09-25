@@ -350,7 +350,6 @@ export const AppContextProvider = ({ children }) => {
 
   const deleteBanner = async(id, urls) => {
     const hiddenMessage = message.loading("Aguarde...", 0);
-    console.log(id)
     try {
       const response = await axios.delete(`${config.apiBaseUrl}/delete_banner/${id}`,{
         data: {imageUrl: urls}
