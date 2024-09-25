@@ -1,64 +1,42 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AdminNavbar from "../Navbar/AdminNavbar";
 import {
   Button,
   Card,
   Col,
-  Divider,
-  Flex,
   Row,
   Form,
   Statistic,
   Switch,
-  Upload,
-  Input,
   Table,
   Popconfirm,
 } from "antd";
 import { useAppContext } from "../../../context";
 import { useNavigate } from "react-router-dom";
 import Markdown from "react-markdown";
-import { UploadOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../../../AuthContext";
 
 function Settings() {
   const navigate = useNavigate();
-  const [fileList, setFileList] = useState([]);
-  const { cloudinaryUsage, getUsages, errorGettingUsages, supabaseUsage,uploadBanner,deleteBanner, switchSettings } =
-    useAppContext();
-  const { settings } = useAuthContext()
-  const pageEnabled = settings[0]?.page_enabled
-  const {bannersImgs} = useAuthContext()
+  const {
+    cloudinaryUsage,
+    getUsages,
+    errorGettingUsages,
+    supabaseUsage,
+    switchSettings,
+  } = useAppContext();
+  const { settings } = useAuthContext();
+  const pageEnabled = settings[0]?.page_enabled;
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
   const getGbToBytes = (gb) => {
     return gb * 1073741824;
   };
 
-  const onFinish = async(values) => {
-    const formData = new FormData();
-
-    fileList.forEach((file) => {
-      formData.append("bannerImages", file.originFileObj);
-    });
-    formData.append("bannerName", values.bannerName);
-    setLoading(true)
-    await uploadBanner(formData)
-    setLoading(false)
-    form.resetFields()
-    setFileList([])
-  }
-
-  const handleSwitchChange = async(value) => {
-    setLoading(true)
-    await switchSettings(value)
-    setLoading(false)
-  }
-
-  const handleUploadChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
+  const handleSwitchChange = async (value) => {
+    setLoading(true);
+    await switchSettings(value);
+    setLoading(false);
   };
-
 
   const getUsageCloudinary = () => {
     if (cloudinaryUsage && cloudinaryUsage.storage) {
@@ -87,83 +65,6 @@ function Settings() {
     }
     return "0 MB";
   };
-
-  const [deletingBanner, setDeletingBanner] = useState(false);
-  const handleDeleteBanner =async (id, urls) => {
-    console.log(id)
-    setDeletingBanner(true)  
-   await deleteBanner(id,urls)
-    setDeletingBanner(false)
-  }
-
-  const tableBanners = [
-  {
-    title: "Banner",
-    dataIndex: "nombre_banner",
-    key:"nombre_banner",
-  },
-  {
-    title: "Imagen",  
-    key:"imagen",
-    render: (_, record) => {
-      return (
-        <img
-          src={record.imagen_urls}
-          alt={record.id}
-          style={{ width: "100px", height: "auto", borderRadius:"1rem", objectFit:"cover" }}
-        />
-      );
-    },
-  },
-  {
-    title: "Acciones",
-    dataIndex: "actions",
-    key:"actions",
-    render: (_, record) => {
-      return (
-        <Popconfirm
-        title="¿Estás seguro de eliminar este banner?"
-        onConfirm={() => handleDeleteBanner(record.id, record.imagen_urls)}
-        okText="Si"
-        cancelText="No"
-        okButtonProps={[
-          {
-            loading: deletingBanner,
-          },
-        ]}
-        >
-        <Button
-          type="primary"
-          danger
-          
-        >
-          Eliminar
-        </Button>
-        </Popconfirm>
-      );
-    },
-  }
-]
-
-const processedBanners = []
-if (bannersImgs && bannersImgs.length > 0) {
-  bannersImgs.forEach((banner) => {
-    const url = JSON.parse(banner.image_urls)[0]
-    processedBanners.push({
-      key: banner.id,
-      id: banner.id,
-      nombre_banner: banner.nombre_banner,
-      imagen_urls: url
-    })
-  })
-}else{
-  processedBanners.push({
-    key: 0,
-    id: 0,
-    nombre_banner: "No hay banners cargados",
-    imagen_urls: ""
-  })
-}
 
   return (
     <>
@@ -208,65 +109,16 @@ if (bannersImgs && bannersImgs.length > 0) {
               />
             </Card>
           </Col>
-          <Col xs={24} sm={18} md={16} lg={8}>
+          <Col xs={24} sm={18} md={16} lg={12}>
             <Card title="Ajustes de la página">
               <h3>Habilitar página</h3>
-              <Switch loading={loading} onChange={handleSwitchChange} value={pageEnabled}></Switch>{" "}
+              <Switch
+                loading={loading}
+                onChange={handleSwitchChange}
+                value={pageEnabled}
+              ></Switch>{" "}
               <Button onClick={() => navigate("/home")}>Visitar Tienda</Button>
-              
             </Card>
-            <Card title="Cargar imagenes al banner">
-              <Form
-                name="bannerImages"
-                layout="vertical"
-                form={form}
-                onFinish={onFinish} // Define tu función de envío
-              >
-                <Form.Item
-                name="bannerName"
-                label="Nombre del banner"
-                rules={[{ required: true, message: "Por favor, ingresa el nombre del banner" }]}
-                >
-                  <Input />
-                </Form.Item>
-  
-                <Form.Item
-                  name="productImages"
-                  label="Subir una imagen"
-                  valuePropName="fileList"
-                  getValueFromEvent={(e)=> e && e.fileList}
-                  rules={[{ required: true, message: "Sube al menos una imagen del producto" }]}
-                >
-                  <Upload
-                    listType="picture"
-                    fileList={fileList}
-                    onChange={handleUploadChange}
-                    beforeUpload={()=> false}
-                    
-                  >
-                    {fileList.length > 0 ? null : (
-                      <Button icon={<UploadOutlined/>}>Subir Imagenes</Button>
-                    )}
-
-                  </Upload>
-                </Form.Item>
-                <Form.Item>
-                  <Button type="primary" htmlType="submit" loading={loading}>Guardar</Button>
-                </Form.Item>
-              </Form>
-            </Card>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={18} md={15} lg={12}>
-          <Card title="Lista de banners cargados">
-              <Table 
-              dataSource={processedBanners}
-              columns={tableBanners}
-              scroll={{ x: 800 }}
-              />
-            </Card>
-            
           </Col>
         </Row>
       </div>
