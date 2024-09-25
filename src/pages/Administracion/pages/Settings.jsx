@@ -10,11 +10,15 @@ import {
   Switch,
   Table,
   Popconfirm,
+  message,
+  Space,
+  Flex,
 } from "antd";
 import { useAppContext } from "../../../context";
 import { useNavigate } from "react-router-dom";
 import Markdown from "react-markdown";
 import { useAuthContext } from "../../../AuthContext";
+import { PaperClipOutlined } from "@ant-design/icons";
 
 function Settings() {
   const navigate = useNavigate();
@@ -66,6 +70,16 @@ function Settings() {
     return "0 MB";
   };
 
+  const handleCopyLink = () =>{
+    const link = `https://macetas-brian.vercel.app/home`
+    navigator.clipboard.writeText(link)
+    .then(()=>{
+      message.success("Link copiado al portapapeles")
+    })
+    .catch(()=>{
+      message.error("Error al copiar el link")
+    })
+  }
   return (
     <>
       <AdminNavbar />
@@ -111,13 +125,18 @@ function Settings() {
           </Col>
           <Col xs={24} sm={18} md={16} lg={12}>
             <Card title="Ajustes de la página">
+            <Flex wrap gap="1rem">
+
               <h3>Habilitar página</h3>
               <Switch
                 loading={loading}
                 onChange={handleSwitchChange}
                 value={pageEnabled}
               ></Switch>{" "}
-              <Button onClick={() => navigate("/home")}>Visitar Tienda</Button>
+              {pageEnabled ? <Button onClick={()=> handleCopyLink()}>Copiar Link <PaperClipOutlined/></Button> : ""}
+              {pageEnabled ? <Button onClick={() => navigate("/home")}>Visitar Tienda</Button> : ""}
+              
+              </Flex>
             </Card>
           </Col>
         </Row>
