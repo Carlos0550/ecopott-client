@@ -17,6 +17,7 @@ import { GroupImagesIntoProducts } from "../../../../utils/AdminProcessProducts"
 import Search from "antd/es/transfer/search";
 import { useAuthContext } from "../../../../AuthContext";
 import { useAppContext } from "../../../../context";
+import Markdown from "react-markdown";
 const { Option } = Select;
 
 const getSlidesToShow = () => {
@@ -104,6 +105,24 @@ function Home() {
     return matchesName && matchesCategory;
   });
 
+  const [listaPromociones, setListaPromociones] = useState([]);
+
+  useEffect(() => {
+    const nuevasPromociones = promotions.map((promocion) => {
+      const idsPromocion = JSON.parse(promocion.id_product_promotion);
+      const productosFiltrados = products.filter((producto) =>
+        idsPromocion.includes(producto.id_product)
+      );
+
+      return {
+        titulo: promocion.name,
+        productos: productosFiltrados,
+      };
+    });
+
+    setListaPromociones(nuevasPromociones);
+  }, [promotions, products]);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(15);
 
@@ -127,6 +146,31 @@ function Home() {
         categories,
       },
     });
+  };
+
+  const CustomCard = ({ promo }) => {
+    return (
+      <div className="custom-card">
+        <div className="image-container">
+          <img src={promo.imageUrl} alt={promo.name} className="card-image" />
+        </div>
+        <div className="card-content">
+          <h3 className="card-title">{promo.name} - ${promo.price}</h3>
+          <div className="validity">
+            <p>{`Válido desde: ${dayjs(promo.start_date).format("YYYY-MM-DD")}`}</p>
+            <p>hasta: {dayjs(promo.end_date).format("YYYY-MM-DD")}</p>
+          </div>
+          <div style={{padding: "1rem", overflowY: "scroll"}}>
+          <h3>Productos de la promoción</h3>
+
+            <Markdown>
+              {`- ${promo.productos.map(producto => producto.name).join('\n- ')}`}
+            </Markdown>
+          </div>
+
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -159,14 +203,13 @@ function Home() {
                   <Card title="Promociones" style={{ height: "min-content" }}>
                     {filteredPromotions.length > 0 ? (
                       <Carousel
-                        autoplaySpeed={5000} // Velocidad del autoplay
-                        autoplay // Habilitar autoplay
-                        arrows // Flechas de navegación
-                        infinite // Deslizamiento infinito
-                        slidesToShow={slidesToShowPromotions} // Mostrar las promociones configuradas por tamaño de pantalla
-                        slidesToScroll={1} // Cuántas tarjetas se deslizan a la vez
-                        speed={5000} // Velocidad del deslizamiento en ms para hacerlo más lento
-                        pauseOnHover={true} // No detener el autoplay al pasar el mouse
+                        autoplaySpeed={5000}
+                        autoplay
+                        arrows
+                        infinite
+                        slidesToShow={slidesToShowPromotions}
+                        slidesToScroll={1}
+                        speed={5000}
                       >
                         {filteredPromotions.map((promo) => (
                           <div
@@ -177,59 +220,20 @@ function Home() {
                               alignItems: "center",
                             }}
                           >
-                            <Card
-                              hoverable
-                              style={{
-                                width: "220px",
-                                height: "300px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "space-evenly",
+                            <CustomCard
+                              promo={{
+                                imageUrl: promo.imageUrl, 
+                                name: promo.name,
+
+                                price: promo.price,
+                                start_date: promo.start_date,
+                                end_date: promo.end_date,
+                                productos:
+                                  listaPromociones.find(
+                                    (p) => p.titulo === promo.name
+                                  )?.productos || [],
                               }}
-                              cover={
-                                <picture
-                                  style={{
-                                    height: "150px",
-                                    overflow: "hidden",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <img
-                                    alt={promo.name}
-                                    src={promo.imageUrl}
-                                    style={{
-                                      height: "100%",
-                                      width: "100%",
-                                      objectFit: "cover",
-                                    }}
-                                  />
-                                </picture>
-                              }
-                            >
-                              <Card.Meta
-                                title={
-                                  <span
-                                    style={{
-                                      whiteSpace: "normal",
-                                      overflow: "visible",
-                                      textOverflow: "unset",
-                                    }}
-                                  >
-                                    {promo.name}
-                                  </span>
-                                }
-                                description={`Precio: $${promo.price}`}
-                              />
-                              <p style={{ marginTop: "10px" }}>
-                                {`Válido desde: ${dayjs(
-                                  promo.start_date
-                                ).format("DD-MM-YYYY")} hasta: ${dayjs(
-                                  promo.end_date
-                                ).format("DD-MM-YYYY")}`}
-                              </p>
-                            </Card>
+                            />
                           </div>
                         ))}
                       </Carousel>
@@ -270,15 +274,19 @@ function Home() {
                           key={product.id_product}
                           className="home__product__card"
                           hoverable
-                          style={{background: product.is_available ? "" : "grey"}}
+                          style={{
+                            background: product.is_available ? "" : "grey",
+                          }}
                           cover={
                             product.imagenes.length > 0 ? (
                               <img
                                 src={product.imagenes[0].image_url}
                                 style={{
-                                  filter: product.is_available ? "none" : "grayscale(100%)",
-                                  opacity: product.is_available ? 1 : 0.5, 
-                                }}                                
+                                  filter: product.is_available
+                                    ? "none"
+                                    : "grayscale(100%)",
+                                  opacity: product.is_available ? 1 : 0.5,
+                                }}
                                 className="home__card__img"
                                 alt={product.name}
                               />
@@ -297,7 +305,6 @@ function Home() {
                               </div>
                             )
                           }
-                          
                           onClick={() => handleCardClick(product.id_product)}
                           // actions={[
                           //   <Button type="primary" disabled>
@@ -314,7 +321,11 @@ function Home() {
                                   textOverflow: "unset",
                                 }}
                               >
-                                {product.is_available ? product.name : <>{product.name} (Sin stock)</>}
+                                {product.is_available ? (
+                                  product.name
+                                ) : (
+                                  <>{product.name} (Sin stock)</>
+                                )}
                               </span>
                             }
                           />
