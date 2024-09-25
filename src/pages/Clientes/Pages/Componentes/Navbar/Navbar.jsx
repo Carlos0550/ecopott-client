@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./navbar.css";
 import { Drawer, Flex, Space } from "antd";
-import { MenuOutlined } from "@ant-design/icons";
+import { HomeFilled, MenuOutlined } from "@ant-design/icons";
 function Navbar() {
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -25,11 +25,11 @@ function Navbar() {
         </div>
         <ul className="admin__links">
           <li className="admin__li">
-            <Link to={"/home"}>Inicio</Link>
+            <Link to={"/home"}><HomeFilled style={{fontSize: "2rem"}}/></Link>
           </li>
-          <li className="admin__li">
+          {/* <li className="admin__li">
             <Link to={"/home/promociones"}>Promociones/Ofertas</Link>
-          </li>
+          </li> */}
         </ul>
       </nav>
       <Drawer
@@ -42,11 +42,11 @@ function Navbar() {
       >
         <Flex vertical gap={"middle"}>
           <li className="admin__li">
-            <Link to={"/home"}>Inicio</Link>
+            <Link to={"/home"}><HomeFilled/> Inicio</Link>
           </li>
-          <li className="admin__li">
+          {/* <li className="admin__li">
             <Link to={"/home/promociones"}>Promociones/Ofertas</Link>
-          </li>
+          </li> */}
         </Flex>
       </Drawer>
     </header>
