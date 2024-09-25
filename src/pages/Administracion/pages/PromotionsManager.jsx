@@ -277,7 +277,7 @@ function PromotionsManager() {
     await uploadBanner(formData)
     setLoading(false)
     formBanner.resetFields()
-    setFileList([])
+    setFileListBanner([])
   }
 
   const [deletingBanner, setDeletingBanner] = useState(false);
