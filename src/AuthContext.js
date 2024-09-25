@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import supabase from "./supabase";
-import { useAppContext } from "./context";
 import { message } from "antd";
 import axios from "axios";
 import { config } from "./config";
@@ -87,7 +86,7 @@ export const AuthProvider = ({ children }) => {
       hiddenMessage();
     }
   };
-
+const alreadyCheck = useRef(false)
   useEffect(() => {
     const checkSession = async () => {
       try {
@@ -113,7 +112,10 @@ export const AuthProvider = ({ children }) => {
         setIsAdmin(false);
       }
     };
-    checkSession();
+    if (!alreadyCheck.current) {
+      alreadyCheck.current = true
+      checkSession();
+    }
   }, [isAuthenticated, isAdmin]);
 
   const login = async (email, password) => {
