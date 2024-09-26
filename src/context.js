@@ -295,7 +295,6 @@ export const AppContextProvider = ({ children }) => {
 
   const delete_promotion = async (promotionID, imageUrl) => {
     const hiddenMessage = message.loading("Aguarde...", 0);
-    console.log(imageUrl)
     try {
       const response = await axios.delete(
         `${config.apiBaseUrl}/delete-promotion/${promotionID}?imageUrl=${encodeURIComponent(imageUrl)}`

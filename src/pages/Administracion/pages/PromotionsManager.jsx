@@ -150,7 +150,6 @@ function PromotionsManager() {
 
 
   const handleDeletePromotion = async (promotionID, imageUrl) => {
-    console.log(imageUrl)
     setDeleting(true);
     await delete_promotion(promotionID, imageUrl);
     setDeleting(false);
