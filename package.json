@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.20.6",
     "axios": "^1.7.7",
+    "check-disk-space": "^3.4.0",
     "dayjs": "^1.11.13",
     "image-compressor.js": "^1.1.4",
     "lucide-react": "^0.445.0",

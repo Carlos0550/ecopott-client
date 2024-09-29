@@ -32,9 +32,6 @@ function Settings() {
   const { settings } = useAuthContext();
   const pageEnabled = settings[0]?.page_enabled;
   const [loading, setLoading] = useState(false);
-  const getGbToBytes = (gb) => {
-    return gb * 1073741824;
-  };
 
   const handleSwitchChange = async (value) => {
     setLoading(true);
@@ -42,33 +39,36 @@ function Settings() {
     setLoading(false);
   };
 
-  const getUsageCloudinary = () => {
-    if (cloudinaryUsage && cloudinaryUsage.storage) {
-      const gbToBytes = getGbToBytes(25);
-      const usage = gbToBytes - cloudinaryUsage.storage.usage;
-
-      return `${(usage / 1073741824).toFixed(2)} GB`;
-    }
-    return "0 GB";
-  };
-
-  const getSupabaseSpace = () => {
+  const getDatabaseUsage = () => {
     if (supabaseUsage && supabaseUsage.length > 0) {
-      const { tables_size } = supabaseUsage[0];
-      const sizePlan = 500 * 1024;
-
-      if (typeof tables_size === "string" && tables_size.includes("kB")) {
-        const kbUsage =
-          parseFloat(tables_size.replace(" kB", "").trim()) * 1024;
-        const usage = sizePlan - kbUsage;
-
-        return `${(usage / 1024).toFixed(1)} MB`;
-      } else {
-        return "Datos no válidos";
+      const { total_size } = supabaseUsage[0];
+      const totalPlanSize = 2 * 1024 * 1024 * 1024; // 2 GB en bytes
+      
+      let usageInBytes = 0;
+  
+      if (typeof total_size === "string") {
+        if (total_size.includes("kB")) {
+          usageInBytes = parseFloat(total_size.replace(" kB", "").trim()) * 1024;
+        } else if (total_size.includes("MB")) {
+          usageInBytes = parseFloat(total_size.replace(" MB", "").trim()) * 1024 * 1024;
+        } else if (total_size.includes("GB")) {
+          usageInBytes = parseFloat(total_size.replace(" GB", "").trim()) * 1024 * 1024 * 1024;
+        } else if (total_size.includes("B")) {
+          usageInBytes = parseFloat(total_size.replace(" B", "").trim());
+        } else {
+          return "Datos no válidos";
+        }
       }
+  
+      const remainingSpace = totalPlanSize - usageInBytes;
+  
+      return `${(remainingSpace / (1024 * 1024)).toFixed(1)} MB`;
     }
+  
     return "0 MB";
   };
+  
+  
 
   const handleCopyLink = () =>{
     const link = `https://macetas-brian.vercel.app/home`
@@ -111,7 +111,7 @@ function Settings() {
                     - ### Espacio disponible en la Base de Datos
                   </Markdown>
                 }
-                value={getSupabaseSpace()}
+                value={getDatabaseUsage()}
               />
               <Statistic
                 title={
@@ -119,7 +119,7 @@ function Settings() {
                     - ### Espacio disponible para almacenar imágenes
                   </Markdown>
                 }
-                value={getUsageCloudinary()}
+                // value={getUsageCloudinary()}
               />
             </Card>
           </Col>
