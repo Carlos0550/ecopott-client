@@ -3,7 +3,7 @@ import { Button, Col, Form, Input, Row, Select, Upload } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { QuestionOutlined, UploadOutlined } from "@ant-design/icons";
 import HelpModal from "./HelpModal";
-import { useAppContext } from "../../../../context";
+import { useAppContext } from "../../context";
 const { Option } = Select
 function AddProducts({editing, product, productImages, closeModal}) {
   const [formProducts] = useForm();

@@ -4,8 +4,8 @@ import AdminNavbar from '../Navbar/AdminNavbar';
 import { useAppContext } from '../../../context';
 import { GroupImagesIntoProducts } from '../../../utils/AdminProcessProducts';
 import { Button, Card, Select } from 'antd';
-import ProductDetails from './ProductDetails'; // Importa el componente de detalles del producto
-import "./css/viewProducts.css"
+import ProductDetails from '../DetallesDelProducto/ProductDetails'; // Importa el componente de detalles del producto
+import "../css/viewProducts.css"
 import Search from 'antd/es/input/Search';
 
 

@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import locale from "antd/es/locale/es_ES";
 import { useAuthContext } from "./AuthContext";
+import { ProcessImages } from "./utils/ProcesarImages";
 dayjs.locale("es");
 export const AppContext = createContext();
 
@@ -34,8 +35,12 @@ export const AppContextProvider = ({ children }) => {
   } = useAuthContext();
   const navigate = useNavigate();
 
+
   const createProduct = async (product) => {
     const hiddenMessage = message.loading("Guardando Producto...");
+
+    const images = product.productImages;
+    const processedImages = await ProcessImages(images);
 
     const formData = new FormData();
     formData.append("productName", product.productName);
@@ -43,8 +48,8 @@ export const AppContextProvider = ({ children }) => {
     formData.append("productCategory", product.productCategory);
     formData.append("productDescription", product.productDescription);
 
-    product.productImages.forEach((image) => {
-      formData.append("productImages", image.originFileObj);
+    processedImages.forEach((image) => {
+      formData.append("productImages", image);
     });
 
     try {
@@ -96,29 +101,37 @@ export const AppContextProvider = ({ children }) => {
 
   const editProduct = async (product, id, lastImages) => {
     const { productImages } = product;
+    
     const hiddenMessage = message.loading("Actualizando...");
     const formData = new FormData();
-    const newImages = [];
-
-    productImages.forEach((img) => {
-      if (img.originFileObj) {
-        newImages.push(img.originFileObj);
+    
+    const newImages = productImages.filter((img) => img.originFileObj);
+  
+    let processedImages = [];
+    if (newImages.length > 0) {
+      try {
+        processedImages = await ProcessImages(newImages);
+        console.log("Imágenes procesadas:", processedImages);
+      } catch (error) {
+        console.error("Error procesando imágenes:", error);
+        message.error("Error procesando imágenes, Verifica que las imagenes estén en un formato adecuado.", 5);
       }
-    });
-
+    }
+  
     const imagesToDelete = lastImages.filter(
       (lastImg) => !productImages.some((img) => img.uid === lastImg.id_image)
     );
-    console.log(imagesToDelete);
+  
     formData.append("productName", product.productName);
     formData.append("productPrice", product.productPrice);
     formData.append("productCategory", product.productCategory);
     formData.append("productDescription", product.productDescription);
     formData.append("imagesToDelete", JSON.stringify(imagesToDelete));
-    newImages.forEach((image) => {
+  
+    processedImages.forEach((image) => {
       formData.append("newImages", image);
     });
-
+  
     try {
       const response = await axios.post(
         `${config.apiBaseUrl}/update-product/${id}`,
@@ -131,7 +144,7 @@ export const AppContextProvider = ({ children }) => {
         message.error(`${response.data.message}`);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error al actualizar el producto:", error);
       if (error.response) {
         message.error(`${error.response.data.message}`);
       } else {
@@ -144,6 +157,8 @@ export const AppContextProvider = ({ children }) => {
       hiddenMessage();
     }
   };
+  
+  
 
   const deleteProduct = async (productID, productImages) => {
     const hiddenMessage = message.loading("Eliminando...", 0);
@@ -237,7 +252,6 @@ export const AppContextProvider = ({ children }) => {
 
   const create_promotion = async (values) => {
     const hiddenMessage = message.loading("Aguarde...", 0);
-
     try {
       const response = await axios.post(
         `${config.apiBaseUrl}/create-promotion`,
@@ -295,6 +309,7 @@ export const AppContextProvider = ({ children }) => {
 
   const delete_promotion = async (promotionID, imageUrl) => {
     const hiddenMessage = message.loading("Aguarde...", 0);
+    console.log(imageUrl)
     try {
       const response = await axios.delete(
         `${config.apiBaseUrl}/delete-promotion/${promotionID}?imageUrl=${encodeURIComponent(imageUrl)}`

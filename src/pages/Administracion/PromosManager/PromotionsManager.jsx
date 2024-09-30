@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import AdminNavbar from "../Navbar/AdminNavbar";
-import ImageCompressor from 'image-compressor.js';
 import Pica from 'pica';
 
 import {
@@ -28,7 +27,7 @@ import DeleteIcon from "../../../SVGs/DeleteIcon";
 import { processPromotions } from "../../../utils/processPromotions";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuthContext } from "../../../AuthContext";
-import { name } from "dayjs/locale/es";
+import { ProcessImages } from "../../../utils/ProcesarImages";
 const pica = Pica();
 
 function PromotionsManager() {
@@ -64,24 +63,31 @@ function PromotionsManager() {
 
   const [imageToDelete, setImageToDelete] = useState(null);
   const handleFinish = async (values) => {
+    setLoading(true);
+    
     const formData = new FormData();
     if (!startDate || !expDate) {
       openNotification();
+      setLoading(false)
       return;
     }
-    setLoading(true);
+    const newImages = fileList.filter((file) => file.originFileObj);
     formData.append("productsIDs", JSON.stringify(values.groupProducts));
     formData.append("promoName", values.promoName);
     formData.append("promoPrice", values.promoPrice);
     formData.append("startDate", startDate);
     formData.append("endDate", expDate);
-    if (fileList.length > 0 && fileList[0].originFileObj) {
-      fileList.forEach((image)=> {
-        formData.append("promoImage", image.originFileObj);
-      })
-      fileList.forEach((image)=> {
-        formData.append("imageToDelete", imageToDelete)
-      })
+    if (newImages && newImages.length > 0) {
+      const processedImage = await ProcessImages(newImages);
+      processedImage.forEach((image)=> {
+      formData.append("promoImage", image);
+    })
+    if (imageToDelete) {
+      formData.append("imageToDelete", imageToDelete)
+    }else{
+      formData.append("imageToDelete", [])
+    }
+      
     }else{
       fileList.forEach((image)=> {
         formData.append("existingImage", image.url);
@@ -110,7 +116,7 @@ function PromotionsManager() {
       ? await update_promotion(formData, selectedPromotion.id_promotion)
       : await create_promotion(formData);
     setLoading(false);
-    //Comentado por el momento para debbugging
+    // Comentado por el momento para debbugging
     form.resetFields();
     setExpDate(null);
     setStartDate(null);
@@ -145,11 +151,12 @@ function PromotionsManager() {
   };
 
   const itemsPerPage = {
-    pageSize: 5,
+    pageSize: 3,
   };
 
 
   const handleDeletePromotion = async (promotionID, imageUrl) => {
+
     setDeleting(true);
     await delete_promotion(promotionID, imageUrl);
     setDeleting(false);
@@ -170,6 +177,14 @@ function PromotionsManager() {
     });
   };
 
+  const handleCancelEdit = () => {
+    form.resetFields();
+    setExpDate(null);
+    setStartDate(null);
+    setEditingPromotion(false);
+    setFileList([])
+  };
+
   useEffect(() => {
     if (editingPromotion && selectedPromotion) {
       const processedPromotions = processPromotions(
@@ -187,7 +202,7 @@ function PromotionsManager() {
         uid: selectedPromotion.id_promotion,
         name: `promotion-${selectedPromotion.id_promotion}.jpg`,
         status: "done",
-        url: selectedPromotion.imageUrl,
+        url: selectedPromotion.imageurl,
       }];
       setFileList(image); 
       setImageToDelete(image[0].url)
@@ -243,7 +258,7 @@ function PromotionsManager() {
             <Edit />
           </Button>{" "}
           <Popconfirm
-            onConfirm={() => handleDeletePromotion(record.id_promotion, record.imageUrl)}
+            onConfirm={() => handleDeletePromotion(record.id_promotion, record.imageurl)}
             okText="Eliminar"
             okType="danger"
             cancelText="Cancelar"
@@ -313,7 +328,6 @@ function PromotionsManager() {
     formData.append("bannerName", values.bannerName);
     setLoading(true)
     await uploadBanner(formData)
-    console.log(fileListBanner)
     setLoading(false)
     formBanner.resetFields()
     setFileListBanner([])
@@ -321,7 +335,6 @@ function PromotionsManager() {
 
   const [deletingBanner, setDeletingBanner] = useState(false);
   const handleDeleteBanner = async (id, urls) => {
-    console.log(id);
     setDeletingBanner(true);
     await deleteBanner(id, urls);
     setDeletingBanner(false);
@@ -414,7 +427,7 @@ function PromotionsManager() {
                     <Button
                       type="primary"
                       danger
-                      onClick={() => setEditingPromotion(false)}
+                      onClick={() =>handleCancelEdit()}
                     >
                       Cancelar editado
                     </Button>
@@ -578,6 +591,42 @@ function PromotionsManager() {
                 </Form.Item>
               </Form>
             </Card>
+            <br />
+            <Card title="Información de la promo">
+              {selectedProducts.length > 0 ? (
+                <ul>
+                  {selectedProducts.map((product) => (
+                    <li key={product.id_product}>
+                      {product.name} - ${product.price}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No se han seleccionado productos aún.</p>
+              )}
+              <h4>
+                Precio Total:{" "}
+                {parseFloat(totalPrice).toLocaleString("es-ES", {
+                  style: "currency",
+                  currency: "ARS",
+                })}
+              </h4>
+              <h4>
+                Valor de la promo:{" "}
+                {parseFloat(promoValue).toLocaleString("es-ES", {
+                  style: "currency",
+                  currency: "ARS",
+                })}
+              </h4>
+              <h4>
+                Validez de la promo: Desde el{" "}
+                {startDate || "fecha no seleccionada"} hasta el{" "}
+                {expDate || "fecha no seleccionada"}{" "}
+                {expDate
+                  ? `(${dayjs(expDate).diff(dayjs(), "day") + 1} días)`
+                  : ""}
+              </h4>
+            </Card>
           </Col>
           <Col xs={24} sm={18} md={16} lg={12}>
           <Card title="Cargar imagenes al banner">
@@ -618,65 +667,25 @@ function PromotionsManager() {
                   <Button type="primary" htmlType="submit" loading={loading}>Guardar</Button>
                 </Form.Item>
               </Form>
-            </Card>
-          </Col>
-          <Col xs={24} sm={18} md={16} lg={12}>
-            <Card title="Información de la promo">
-              {selectedProducts.length > 0 ? (
-                <ul>
-                  {selectedProducts.map((product) => (
-                    <li key={product.id_product}>
-                      {product.name} - ${product.price}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>No se han seleccionado productos aún.</p>
-              )}
-              <h4>
-                Precio Total:{" "}
-                {parseFloat(totalPrice).toLocaleString("es-ES", {
-                  style: "currency",
-                  currency: "ARS",
-                })}
-              </h4>
-              <h4>
-                Valor de la promo:{" "}
-                {parseFloat(promoValue).toLocaleString("es-ES", {
-                  style: "currency",
-                  currency: "ARS",
-                })}
-              </h4>
-              <h4>
-                Validez de la promo: Desde el{" "}
-                {startDate || "fecha no seleccionada"} hasta el{" "}
-                {expDate || "fecha no seleccionada"}{" "}
-                {expDate
-                  ? `(${dayjs(expDate).diff(dayjs(), "day") + 1} días)`
-                  : ""}
-              </h4>
-            </Card>
-            <br />
-            <Card title="Lista de promos">
+              <h3>Lista de banners</h3>
+              <Table
+                dataSource={processedBanners}
+                columns={tableBanners}
+                scroll={{ x: 800 }}
+              />
+              <h3>Lista de promociones</h3>
               <Table
                 dataSource={promotions}
                 columns={tablePromotion}
                 pagination={itemsPerPage}
                 scroll={{ x: 500 }}
               />
+            
             </Card>
           </Col>
-          <Col xs={24} sm={18} md={15} lg={12}>
-            <Card title="Lista de banners cargados">
-              <Table
-                dataSource={processedBanners}
-                columns={tableBanners}
-                scroll={{ x: 800 }}
-              />
-            </Card>
-          </Col>
+         
         </Row>
-       
+        
       </div>
       {contextHolder}
     </>
