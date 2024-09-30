@@ -1,12 +1,12 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import AdminPage from './pages/Administracion/pages/AdminPage';
-import ViewProducts from './pages/Administracion/pages/ViewProducts';
-import PromotionsManager from './pages/Administracion/pages/PromotionsManager';
+import AdminPage from './pages/Administracion/AdminPage';
+import ViewProducts from './pages/Administracion/VerTodosLosProductos/ViewProducts';
+import PromotionsManager from './pages/Administracion/PromosManager/PromotionsManager';
 import Login from './pages/Login/Login';
-import Settings from './pages/Administracion/pages/Settings';
-import Home from "./pages/Clientes/Pages/Inicio/Home";
+import Settings from './pages/Administracion/Ajustes/Settings';
+import Home from './pages/Clientes/Home';
 import { useAuthContext } from './AuthContext';
-import ProductView from './pages/Clientes/Pages/DetallesDelProducto/ProductView';
+import ProductView from "./pages/Clientes/Componentes/DetallesDelProducto/ProductView"
 
 function App() {
   const { isAuthenticated, isAdmin } = useAuthContext();

@@ -43,7 +43,6 @@ function Settings() {
     if (supabaseUsage && supabaseUsage.length > 0) {
       const { total_size } = supabaseUsage[0];
       const totalPlanSize = 2 * 1024 * 1024 * 1024; // 2 GB en bytes
-      
       let usageInBytes = 0;
   
       if (typeof total_size === "string") {

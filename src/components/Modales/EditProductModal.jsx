@@ -1,6 +1,6 @@
 import { Button, Modal } from 'antd'
 import React from 'react'
-import AddProducts from '../Componentes/CargaDeProductos/AddProducts'
+import AddProducts from "../CargaDeProductos/AddProducts"
 
 function EditProductModal({closeModal,product, productImages}) {
   return (

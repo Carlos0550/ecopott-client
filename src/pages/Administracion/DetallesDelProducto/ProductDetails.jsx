@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppContext } from '../../../context';
-import "./css/productDetails.css"
+import "../css/productDetails.css"
 import { Button, Popconfirm, Space, Switch } from 'antd';
 import Markdown from 'react-markdown';
-import EditProductModal from '../EditarProductos/EditProductModal';
+import EditProductModal from '../../../components/Modales/EditProductModal';
 import { useAuthContext } from '../../../AuthContext';
 function ProductDetails() {
   const { id } = useParams(); 

@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Navbar from "../Componentes/Navbar/Navbar";
+import Navbar from "./Componentes/Navbar/Navbar";
 import "./home.css";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import {
-  Button,
   Card,
   Carousel,
   Empty,
@@ -12,11 +11,10 @@ import {
   Skeleton,
   Typography,
 } from "antd";
-import { config } from "../../../../config";
-import { GroupImagesIntoProducts } from "../../../../utils/AdminProcessProducts";
+import { GroupImagesIntoProducts } from "../../utils/AdminProcessProducts";
 import Search from "antd/es/transfer/search";
-import { useAuthContext } from "../../../../AuthContext";
-import { useAppContext } from "../../../../context";
+import { useAppContext } from "../../context";
+import { useAuthContext } from "../../AuthContext";
 import Markdown from "react-markdown";
 const { Option } = Select;
 
@@ -152,7 +150,7 @@ function Home() {
     return (
       <div className="custom-card">
         <div className="image-container">
-          <img src={promo.imageUrl} alt={promo.name} className="card-image" />
+          <img src={promo.imageurl} alt={promo.name} className="card-image" />
         </div>
         <div className="card-content">
           <h3 className="card-title">{promo.name} - ${promo.price}</h3>
@@ -222,7 +220,7 @@ function Home() {
                           >
                             <CustomCard
                               promo={{
-                                imageUrl: promo.imageUrl, 
+                                imageurl: promo.imageurl, 
                                 name: promo.name,
 
                                 price: promo.price,

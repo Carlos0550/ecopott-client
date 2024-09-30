@@ -1,11 +1,10 @@
 import React from "react";
-import AdminNavbar from "../Navbar/AdminNavbar";
+import AdminNavbar from "./Navbar/AdminNavbar";
 import "./css/adminPage.css"
-import { Card, Col, Row,Form } from "antd";
-import { useForm } from "antd/es/form/Form";
-import AddProducts from "../Componentes/CargaDeProductos/AddProducts";
+import { Card, Col, Row } from "antd";
+import AddProducts from "../../components/CargaDeProductos/AddProducts";
 import Title from "antd/es/typography/Title";
-import AddCategory from "../Componentes/CargaDeCategorias/AddCategory";
+import AddCategory from "../../components/CargaDeCategorias/AddCategory";
 function AdminPage() {
   
 

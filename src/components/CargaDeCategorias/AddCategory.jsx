@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAppContext } from "../../../../context";
+import { useAppContext } from "../../context";
 import { Button, Form, Input, List, Popconfirm } from "antd";
 import HelpModal from "../CargaDeProductos/HelpModal";
 import { DeleteOutlined, EditOutlined, QuestionOutlined } from "@ant-design/icons";
