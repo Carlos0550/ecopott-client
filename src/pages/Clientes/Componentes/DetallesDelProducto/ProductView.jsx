@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import "./productDetails.css"
 import Markdown from 'react-markdown';
-import Navbar from '../Navbar/Navbar';
 import { useAuthContext } from '../../../../AuthContext';
 function ProductView() {
   const { productId } = useParams(); 
@@ -35,7 +34,6 @@ function ProductView() {
 
   return (
     <>
-          <Navbar/>
 
       <div className='products-details__wrapper'>
       <div className='product-details__imgs'>

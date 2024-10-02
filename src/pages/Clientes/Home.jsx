@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Navbar from "./Componentes/Navbar/Navbar";
 import "./home.css";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import {
@@ -173,7 +172,6 @@ function Home() {
 
   return (
     <>
-      <Navbar />
       <Routes>
         <Route
           path="/*"
