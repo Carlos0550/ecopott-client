@@ -54,7 +54,7 @@ function Home() {
     bannersImgs,
   } = useAuthContext();
   const { dayjs } = useAppContext();
-  const pageEnabled = settings[0]?.page_enabled;
+  const pageEnabled = settings && settings[0]?.page_enabled;
   console.log(promotions);
   const filteredPromotions = promotions.filter(
     (promotion) => promotion.enabled === true
