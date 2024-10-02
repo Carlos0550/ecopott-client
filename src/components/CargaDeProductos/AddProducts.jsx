@@ -95,7 +95,7 @@ function AddProducts({editing, product, productImages, closeModal}) {
                 
             >
                 <Select id="productCategory" allowClear>
-                  {categories.map((item) => (
+                  {categories && categories.map((item) => (
                     <Option value={item.id_category} key={item.id_category}>
                       {item.name}
                     </Option>
